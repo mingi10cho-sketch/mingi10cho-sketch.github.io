@@ -1,0 +1,54 @@
+name: Deploy to GitHub Pages
+
+on:
+  # main 브랜치에 push될 때 실행
+  push:
+    branches:
+      - main
+
+  # GitHub Actions 탭에서 수동으로도 실행할 수 있도록 설정
+  workflow_dispatch:
+
+# 리포지토리 권한 설정 (Pages 배포에 필요)
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 동시 배포 충돌 방지
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 만약 Node.js나 Python 등 빌드 도구가 필요하다면 여기에 설정 추가 (예: MkDocs의 경우 Python 설정)
+      # - name: Set up Python
+      #   uses: actions/setup-python@v5
+      #   with:
+      #     python-version: '3.10'
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # 배포할 파일이 들어있는 폴더 경로 지정 (예: 루트 디렉토리 또는 빌드된 폴더)
+          path: '.' 
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
