@@ -1,21 +1,16 @@
-name: Deploy to GitHub Pages
+name: Deploy MkDocs to GitHub Pages
 
 on:
-  # main 브랜치에 push될 때 실행
   push:
     branches:
       - main
-
-  # GitHub Actions 탭에서 수동으로도 실행할 수 있도록 설정
   workflow_dispatch:
 
-# 리포지토리 권한 설정 (Pages 배포에 필요)
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 동시 배포 충돌 방지
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -27,11 +22,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 만약 Node.js나 Python 등 빌드 도구가 필요하다면 여기에 설정 추가 (예: MkDocs의 경우 Python 설정)
-      # - name: Set up Python
-      #   uses: actions/setup-python@v5
-      #   with:
-      #     python-version: '3.10'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install mkdocs
+          # 테마나 플러그인을 쓰신다면 아래 주석을 풀고 설치하세요 (예: Material 테마)
+          # pip install mkdocs-material
+          # 또는 requirements.txt 파일이 있다면 아래 줄을 사용하세요
+          # pip install -r requirements.txt
+
+      - name: Build MkDocs site
+        run: mkdocs build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -39,8 +44,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # 배포할 파일이 들어있는 폴더 경로 지정 (예: 루트 디렉토리 또는 빌드된 폴더)
-          path: '.' 
+          # MkDocs 빌드 결과물이 저장되는 기본 폴더는 'site'입니다
+          path: 'site'
 
   deploy:
     environment:
