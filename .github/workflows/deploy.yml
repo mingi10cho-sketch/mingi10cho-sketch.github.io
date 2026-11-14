@@ -31,7 +31,7 @@ jobs:
         run: |
           pip install mkdocs
           # 테마나 플러그인을 쓰신다면 아래 주석을 풀고 설치하세요 (예: Material 테마)
-          # pip install mkdocs-material
+          pip install mkdocs-material
           # 또는 requirements.txt 파일이 있다면 아래 줄을 사용하세요
           # pip install -r requirements.txt
 
