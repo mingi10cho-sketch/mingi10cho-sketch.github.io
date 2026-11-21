@@ -1,4 +1,3 @@
-# Welcome to MkDocs
 
 # 조민기
 
