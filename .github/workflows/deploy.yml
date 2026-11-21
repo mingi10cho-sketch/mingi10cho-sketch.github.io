@@ -1,59 +1,27 @@
-name: Deploy MkDocs to GitHub Pages
+# workflow 이름 GitHub Actions tab에 표시된다.
+name: Deploy MkDocs
 
+# 작업
 on:
   push:
     branches:
-      - main
-  workflow_dispatch:
+      - main    # 배포를 트리거할 branch name
 
+# GitHub Actions가 현재 repository에 Write 권한 부여(Actions에서 설정할 수도 있다.)
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
+# 수행할 작업 설정
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-latest      # 작업이 실행되는 OS
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4       # source code 설정
+      - uses: actions/setup-python@v5   # python 환경 설정(MkDocs 실행을 위해 필요)
         with:
           python-version: '3.x'
-
-      - name: Install dependencies
-        run: |
-          pip install mkdocs
-          # 테마나 플러그인을 쓰신다면 아래 주석을 풀고 설치하세요 (예: Material 테마)
-          pip install mkdocs-material
-          # 또는 requirements.txt 파일이 있다면 아래 줄을 사용하세요
-          # pip install -r requirements.txt
-
-      - name: Build MkDocs site
-        run: mkdocs build
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # MkDocs 빌드 결과물이 저장되는 기본 폴더는 'site'입니다
-          path: 'site'
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
+      - run: pip install mkdocs-material        # 필요한 Library 설치
+      - run: mkdocs gh-deploy --force           # HTML을 빌드하고 GitHub Pages에 배포
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
