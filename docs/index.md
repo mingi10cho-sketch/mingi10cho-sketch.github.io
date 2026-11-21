@@ -1,9 +1,7 @@
 # Welcome to MkDocs
 
-조민기, iii,oooooo 777777776
+# 조민기
 
-
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
 
 ## Commands
 
